@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apply for Kazi Mtaani</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Kazi Mtaani Application Form</h1>
+    <form id="applicationForm">
+      <label>Full Name:</label>
+      <input type="text" name="full_name" required />
+
+      <label>Phone Number:</label>
+      <input type="tel" name="phone_number" required />
+
+      <label>Email:</label>
+      <input type="email" name="email" required />
+
+      <label>County:</label>
+      <input type="text" name="county" required />
+
+      <label>Sub-county:</label>
+      <input type="text" name="sub_county" required />
+
+      <label>Ward:</label>
+      <input type="text" name="ward" required />
+
+      <label>Photo of ID:</label>
+      <input type="file" name="id_photo" accept="image/*" required />
+
+      <label>KCSE Certificate:</label>
+      <input type="file" name="kcse_certificate" accept="application/pdf,image/*" required />
+
+      <label>University Admission Letter:</label>
+      <input type="file" name="university_letter" accept="application/pdf,image/*" required />
+
+      <button type="submit">Submit Application</button>
+    </form>
+    <div id="successMessage" class="hidden">Application submitted successfully!</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="apply.js"></script>
+</body>
+</html>

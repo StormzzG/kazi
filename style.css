@@ -1,0 +1,54 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  padding: 20px;
+  margin: 0;
+}
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.apply-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background: green;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+form label {
+  display: block;
+  margin-top: 15px;
+}
+form input[type="text"],
+form input[type="email"],
+form input[type="tel"],
+form input[type="file"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+button[type="submit"] {
+  margin-top: 20px;
+  background: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.hidden {
+  display: none;
+}
+#successMessage {
+  color: green;
+  font-weight: bold;
+  margin-top: 15px;
+}
