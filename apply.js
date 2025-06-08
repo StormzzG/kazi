@@ -1,84 +1,80 @@
 const SUPABASE_URL = "https://xholnsqzapffifkzymot.supabase.co"; 
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhob2xuc3F6YXBmZmlma3p5bW90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NDg0NDMsImV4cCI6MjA2NDIyNDQ0M30.v0Yb8QYrcRY0PfQPfFV72JtBRga-jbSy8eWiohFzlAI"; 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ===== Helper Functions =====
-function showMessage(type, text) {
-  const messageBox = document.getElementById('form-message');
-  messageBox.className = `message ${type}`;
-  messageBox.textContent = text;
-  messageBox.style.top = '20px';
-  setTimeout(() => {
-    messageBox.style.top = '-100px';
-  }, 4000);
-}
+// Reference to message box
+const messageBox = document.getElementById('message');
 
-// ===== Form Submission =====
+// Handle form submission
 document.getElementById('application-form').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const name = document.getElementById('name').value.trim();
+  // Collect form data
+  const fullName = document.getElementById('fullName').value.trim();
   const email = document.getElementById('email').value.trim();
   const phone = document.getElementById('phone').value.trim();
-  const kraPin = document.getElementById('kra_pin').value.trim();
+  const kraPin = document.getElementById('kraPin').value.trim();
+  const idPhoto = document.getElementById('idPhoto').files[0];
+  const kcseCert = document.getElementById('kcseCert').files[0];
+  const admissionLetter = document.getElementById('admissionLetter').files[0];
 
-  const idPhoto = document.getElementById('id_photo').files[0];
-  const kcseCert = document.getElementById('kcse_cert').files[0];
-  const admissionLetter = document.getElementById('admission_letter').files[0];
-
-  // Validate fields
-  if (!name || !email || !phone || !kraPin || !idPhoto || !kcseCert || !admissionLetter) {
-    showMessage('error', 'Please fill all fields and upload all documents.');
-    return;
-  }
-
+  // Validate phone format
   if (!phone.startsWith('+254')) {
-    showMessage('error', 'Phone number must start with +254.');
+    showMessage("Phone number must start with +254", "error");
     return;
   }
 
   if (kraPin.length !== 11) {
-    showMessage('error', 'KRA PIN must be exactly 11 characters.');
+    showMessage("KRA PIN must be exactly 11 characters", "error");
     return;
   }
 
-  try {
-    const timestamp = Date.now();
+  // Upload files to Supabase storage
+  const uploads = await Promise.all([
+    uploadFile(idPhoto, `id-${Date.now()}-${idPhoto.name}`),
+    uploadFile(kcseCert, `kcse-${Date.now()}-${kcseCert.name}`),
+    uploadFile(admissionLetter, `admission-${Date.now()}-${admissionLetter.name}`)
+  ]);
 
-    // Upload files to Supabase Storage
-    const uploadFile = async (file, label) => {
-      const { data, error } = await supabase.storage
-        .from('applications')
-        .upload(`${label}_${timestamp}_${file.name}`, file);
-      if (error) throw new Error(`Failed to upload ${label}`);
-      return `${SUPABASE_URL}/storage/v1/object/public/applications/${data.path}`;
-    };
+  if (uploads.includes(null)) {
+    showMessage("File upload failed. Please try again.", "error");
+    return;
+  }
 
-    const idPhotoUrl = await uploadFile(idPhoto, 'id_photo');
-    const kcseUrl = await uploadFile(kcseCert, 'kcse');
-    const admissionUrl = await uploadFile(admissionLetter, 'admission');
+  // Save form data in Supabase table
+  const { error } = await supabase.from('applications').insert({
+    full_name: fullName,
+    email: email,
+    phone: phone,
+    kra_pin: kraPin,
+    id_photo_url: uploads[0],
+    kcse_cert_url: uploads[1],
+    admission_letter_url: uploads[2]
+  });
 
-    // Insert into table
-    const { error: insertError } = await supabase
-      .from('applications')
-      .insert([
-        {
-          name,
-          email,
-          phone,
-          kra_pin: kraPin,
-          id_photo_url: idPhotoUrl,
-          kcse_certificate_url: kcseUrl,
-          admission_letter_url: admissionUrl
-        }
-      ]);
-
-    if (insertError) throw new Error(insertError.message);
-
-    showMessage('success', 'Application submitted successfully!');
+  if (error) {
+    showMessage("Error submitting application: " + error.message, "error");
+  } else {
+    showMessage("Application submitted successfully!", "success");
     document.getElementById('application-form').reset();
-  } catch (err) {
-    console.error(err);
-    showMessage('error', err.message || 'Something went wrong.');
   }
 });
+
+// Upload file helper
+async function uploadFile(file, path) {
+  const { data, error } = await supabase.storage.from('applications').upload(path, file);
+  if (error) {
+    console.error("Upload error:", error.message);
+    return null;
+  }
+  const { data: urlData } = supabase.storage.from('applications').getPublicUrl(path);
+  return urlData.publicUrl;
+}
+
+// Show message function
+function showMessage(text, type) {
+  messageBox.textContent = text;
+  messageBox.className = `message ${type}`;
+  messageBox.classList.remove('hidden');
+  setTimeout(() => messageBox.classList.add('hidden'), 5000);
+}

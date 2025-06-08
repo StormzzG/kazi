@@ -4,36 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Apply for Kazi Mtaani</title>
-  <link rel="icon" href="favicon.ico" type="image/x-icon"/>
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.5/dist/umd/supabase.min.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>Apply for the 2025 Kazi Mtaani Program</h1>
-    <form id="application-form" enctype="multipart/form-data">
-      <input type="text" name="fullname" placeholder="Full Name" required />
-      <input type="text" name="idnumber" placeholder="National ID Number" required />
-      <input type="text" name="phone" placeholder="Phone Number (+254...)" required />
-      <input type="email" name="email" placeholder="Email Address" required />
-      <input type="text" name="county" placeholder="County" required />
-      <input type="text" name="subcounty" placeholder="Sub-county" required />
-      <input type="text" name="ward" placeholder="Ward" required />
-      <input type="text" name="kra" placeholder="KRA PIN" maxlength="11" required />
-      <label>Photo of ID (JPG/PNG):</label>
-      <input type="file" name="id_photo" accept="image/*" required />
-      <label>KCSE Certificate (PDF):</label>
-      <input type="file" name="kcse_cert" accept=".pdf" required />
-      <label>University Admission Letter (PDF):</label>
-      <input type="file" name="admission_letter" accept=".pdf" required />
+  <div class="form-container">
+    <h2>Application Form</h2>
+    <form id="application-form">
+      <input type="text" id="fullName" placeholder="Full Name" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="text" id="phone" placeholder="Phone Number (+254...)" required />
+      <input type="text" id="kraPin" placeholder="KRA PIN (11 characters)" maxlength="11" minlength="11" required />
+      <input type="file" id="idPhoto" accept="image/*" required />
+      <input type="file" id="kcseCert" accept=".pdf,.jpg,.jpeg,.png" required />
+      <input type="file" id="admissionLetter" accept=".pdf,.jpg,.jpeg,.png" required />
       <button type="submit">Submit Application</button>
     </form>
-    <p id="form-message" style="margin-top: 1rem; font-weight: bold;"></p>
-    <p id="status"></p>
+    <div id="message" class="message hidden"></div>
   </div>
-  <div id="form-message" class="form-message"></div>
   <script src="apply.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </body>
 </html>
