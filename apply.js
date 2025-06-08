@@ -39,11 +39,31 @@ async function submitForm(event) {
     uni_letter_url: uniLetterPath
   }]);
 
-  if (error) {
-    console.error('Insert error:', error);
-    alert('There was an error submitting your application.');
-  } else {
-    alert('Application submitted successfully!');
-    document.getElementById('applicationForm').reset();
+  if (!fullName || !email || !phone || !kraPin || !idPhoto || !kcseCert || !admissionLetter) {
+    messageElement.textContent = '❌ Please fill in all fields and upload all required documents.';
+    messageElement.style.color = 'red';
+    return;
+  }
+
+  try {
+    await supabase.from('applications').insert([
+      {
+        full_name: fullName,
+        email,
+        phone,
+        kra_pin: kraPin,
+        id_photo_url: idPhotoURL,
+        kcse_cert_url: kcseCertURL,
+        admission_letter_url: admissionLetterURL,
+      },
+    ]);
+
+    messageElement.textContent = '✅ Application submitted successfully!';
+    messageElement.style.color = 'green';
+    form.reset(); // Clear the form
+  } catch (error) {
+    console.error('Error submitting application:', error);
+    messageElement.textContent = '❌ Error submitting application. Please try again.';
+    messageElement.style.color = 'red';
   }
 }
