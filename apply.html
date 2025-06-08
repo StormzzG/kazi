@@ -12,17 +12,36 @@
   <div class="form-container">
     <h2>Application Form</h2>
     <form id="application-form">
-      <input type="text" id="fullName" placeholder="Full Name" required />
-      <input type="email" id="email" placeholder="Email" required />
-      <input type="text" id="phone" placeholder="Phone Number (+254...)" required />
-      <input type="text" id="kraPin" placeholder="KRA PIN (11 characters)" maxlength="11" minlength="11" required />
-      <input type="file" id="idPhoto" accept="image/*" required />
-      <input type="file" id="kcseCert" accept=".pdf,.jpg,.jpeg,.png" required />
-      <input type="file" id="admissionLetter" accept=".pdf,.jpg,.jpeg,.png" required />
+      <label for="fullName">Full Name:</label>
+      <input type="text" id="fullName" name="fullName" required />
+
+      <label for="idNumber">ID Number:</label>
+      <input type="text" id="idNumber" name="idNumber" required />
+
+      <label for="kraPin">KRA PIN:</label>
+      <input type="text" id="kraPin" name="kraPin" maxlength="11" required />
+
+      <label for="phoneNumber">Phone Number:</label>
+      <input type="text" id="phoneNumber" name="phoneNumber" required />
+
+      <label for="location">Location:</label>
+      <input type="text" id="location" name="location" required />
+
+      <label for="idPhoto">Photo of ID:</label>
+      <input type="file" id="idPhoto" name="idPhoto" accept="image/*" required />
+
+      <label for="kcseCert">KCSE Certificate:</label>
+      <input type="file" id="kcseCert" name="kcseCert" accept="application/pdf,image/*" required />
+
+      <label for="admissionLetter">University Admission Letter:</label>
+      <input type="file" id="admissionLetter" name="admissionLetter" accept="application/pdf,image/*" required />
+
       <button type="submit">Submit Application</button>
     </form>
-    <div id="message" class="message hidden"></div>
+
+    <div id="form-message" class="form-message"></div>
   </div>
+
   <script src="apply.js"></script>
 </body>
 </html>
