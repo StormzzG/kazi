@@ -52,3 +52,13 @@ button[type="submit"] {
   font-weight: bold;
   margin-top: 15px;
 }
+
+.form-message {
+  margin-top: 1rem;
+  font-weight: bold;
+  color: #e60000; /* default red for errors */
+}
+
+.form-message:empty {
+  display: none;
+}
