@@ -54,11 +54,22 @@ button[type="submit"] {
 }
 
 .form-message {
-  margin-top: 1rem;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  padding: 12px 20px;
+  border-radius: 8px;
   font-weight: bold;
-  color: #e60000; /* default red for errors */
+  color: #fff;
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
 }
 
-.form-message:empty {
-  display: none;
+.form-message.success {
+  background: #28a745;
+}
+
+.form-message.error {
+  background: #dc3545;
 }
