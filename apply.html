@@ -2,46 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Apply for Kazi Mtaani</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Apply for Kazi Mtaani 2025</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="favicon.ico" type="image/x-icon" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.5/dist/umd/supabase.min.js"></script>
 </head>
 <body>
   <div class="form-container">
     <h2>Application Form</h2>
     <form id="application-form">
-      <label for="fullName">Full Name:</label>
-      <input type="text" id="fullName" name="fullName" required />
-
-      <label for="idNumber">ID Number:</label>
-      <input type="text" id="idNumber" name="idNumber" required />
-
-      <label for="kraPin">KRA PIN:</label>
-      <input type="text" id="kraPin" name="kraPin" maxlength="11" required />
-
-      <label for="phoneNumber">Phone Number:</label>
-      <input type="text" id="phoneNumber" name="phoneNumber" required />
-
-      <label for="location">Location:</label>
-      <input type="text" id="location" name="location" required />
-
-      <label for="idPhoto">Photo of ID:</label>
-      <input type="file" id="idPhoto" name="idPhoto" accept="image/*" required />
-
-      <label for="kcseCert">KCSE Certificate:</label>
-      <input type="file" id="kcseCert" name="kcseCert" accept="application/pdf,image/*" required />
-
-      <label for="admissionLetter">University Admission Letter:</label>
-      <input type="file" id="admissionLetter" name="admissionLetter" accept="application/pdf,image/*" required />
-
+      <label>Full Name <span>*</span><input type="text" name="fullName" required></label>
+      <label>Phone Number <span>*</span><input type="text" name="phoneNumber" required></label>
+      <label>ID Number <span>*</span><input type="text" name="idNumber" required></label>
+      <label>County <span>*</span><input type="text" name="county" required></label>
+      <label>Sub-County <span>*</span><input type="text" name="subCounty" required></label>
+      <label>Ward <span>*</span><input type="text" name="ward" required></label>
+      <label>KRA PIN <span>*</span><input type="text" name="kraPin" required></label>
+      <label>Photo of ID(PNG/JPG) <span>*</span><input type="file" name="idPhoto" accept="image/*" required></label>
+      <label>KCSE Certificate(PDF) <span>*</span><input type="file" name="kcseCert" accept=".pdf,.jpg,.png" required></label>
       <button type="submit">Submit Application</button>
     </form>
 
-    <div id="form-message" class="form-message"></div>
+    <div id="form-status" class="hidden"></div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="apply.js"></script>
 </body>
 </html>

@@ -1,80 +1,99 @@
-const SUPABASE_URL = "https://xholnsqzapffifkzymot.supabase.co"; 
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhob2xuc3F6YXBmZmlma3p5bW90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NDg0NDMsImV4cCI6MjA2NDIyNDQ0M30.v0Yb8QYrcRY0PfQPfFV72JtBRga-jbSy8eWiohFzlAI"; 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+document.addEventListener('DOMContentLoaded', async () => {
+  const form = document.getElementById('application-form');
+  const statusDiv = document.getElementById('form-status');
 
-// Reference to message box
-const messageBox = document.getElementById('message');
+  const supabase = window.supabase.createClient(
+    'https://xholnsqzapffifkzymot.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhob2xuc3F6YXBmZmlma3p5bW90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2NDg0NDMsImV4cCI6MjA2NDIyNDQ0M30.v0Yb8QYrcRY0PfQPfFV72JtBRga-jbSy8eWiohFzlAI'
+  );
 
-// Handle form submission
-document.getElementById('application-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  // Collect form data
-  const fullName = document.getElementById('fullName').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const kraPin = document.getElementById('kraPin').value.trim();
-  const idPhoto = document.getElementById('idPhoto').files[0];
-  const kcseCert = document.getElementById('kcseCert').files[0];
-  const admissionLetter = document.getElementById('admissionLetter').files[0];
-
-  // Validate phone format
-  if (!phone.startsWith('+254')) {
-    showMessage("Phone number must start with +254", "error");
-    return;
+  // Utility to show messages
+  function showMessage(message, isSuccess = true) {
+    statusDiv.textContent = message;
+    statusDiv.className = isSuccess ? 'success' : 'error';
+    setTimeout(() => {
+      statusDiv.className = 'hidden';
+    }, 5000);
   }
 
-  if (kraPin.length !== 11) {
-    showMessage("KRA PIN must be exactly 11 characters", "error");
-    return;
+  // Sanitize filename to avoid upload errors
+  function sanitizeFileName(filename) {
+    return filename.replace(/[^\w.-]/g, '_');
   }
 
-  // Upload files to Supabase storage
-  const uploads = await Promise.all([
-    uploadFile(idPhoto, `id-${Date.now()}-${idPhoto.name}`),
-    uploadFile(kcseCert, `kcse-${Date.now()}-${kcseCert.name}`),
-    uploadFile(admissionLetter, `admission-${Date.now()}-${admissionLetter.name}`)
-  ]);
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-  if (uploads.includes(null)) {
-    showMessage("File upload failed. Please try again.", "error");
-    return;
-  }
+    const fullName = form.fullName.value.trim();
+    const phoneNumber = form.phoneNumber.value.trim();
+    const idNumber = form.idNumber.value.trim();
+    const county = form.county.value.trim();
+    const subCounty = form.subCounty.value.trim();
+    const ward = form.ward.value.trim();
+    const kraPin = form.kraPin.value.trim();
+    const idPhotoFile = form.idPhoto.files[0];
+    const kcseCertFile = form.kcseCert.files[0];
 
-  // Save form data in Supabase table
-  const { error } = await supabase.from('applications').insert({
-    full_name: fullName,
-    email: email,
-    phone: phone,
-    kra_pin: kraPin,
-    id_photo_url: uploads[0],
-    kcse_cert_url: uploads[1],
-    admission_letter_url: uploads[2]
+    // Validations
+    if (!fullName || !phoneNumber || !idNumber || !county || !subCounty || !ward || !kraPin || !idPhotoFile || !kcseCertFile) {
+      return showMessage("Please fill in all required fields", false);
+    }
+
+    if (!phoneNumber.startsWith('+254')) {
+      return showMessage("Phone must start with +254", false);
+    }
+
+    if (kraPin.length !== 11) {
+      return showMessage("KRA PIN must be 11 characters", false);
+    }
+
+    if (idNumber.length !== 8) {
+      return showMessage("ID Number must be 8 digits", false);
+    }
+
+    try {
+      const timestamp = Date.now();
+      const idPhotoPath = `${timestamp}_${sanitizeFileName(idPhotoFile.name)}`;
+      const kcsePath = `${timestamp}_${sanitizeFileName(kcseCertFile.name)}`;
+
+      // Upload files to Supabase Storage
+      const { error: idPhotoErr } = await supabase.storage
+        .from('applications')
+        .upload(idPhotoPath, idPhotoFile);
+
+      const { error: kcseErr } = await supabase.storage
+        .from('applications')
+        .upload(kcsePath, kcseCertFile);
+
+      if (idPhotoErr || kcseErr) {
+        return showMessage("Error uploading documents", false);
+      }
+
+      // Insert form data to Supabase table
+      const { error: insertError } = await supabase
+        .from('applications')
+        .insert([{
+          full_name: fullName,
+          phone_number: phoneNumber,
+          id_number: idNumber,
+          county,
+          sub_county: subCounty,
+          ward,
+          kra_pin: kraPin,
+          id_photo: idPhotoPath,
+          kcse_cert: kcsePath
+        }]);
+
+      if (insertError) {
+        return showMessage("Error saving application", false);
+      }
+
+      showMessage("Application submitted successfully!");
+      form.reset();
+
+    } catch (err) {
+      console.error(err);
+      showMessage("Unexpected error occurred", false);
+    }
   });
-
-  if (error) {
-    showMessage("Error submitting application: " + error.message, "error");
-  } else {
-    showMessage("Application submitted successfully!", "success");
-    document.getElementById('application-form').reset();
-  }
 });
-
-// Upload file helper
-async function uploadFile(file, path) {
-  const { data, error } = await supabase.storage.from('applications').upload(path, file);
-  if (error) {
-    console.error("Upload error:", error.message);
-    return null;
-  }
-  const { data: urlData } = supabase.storage.from('applications').getPublicUrl(path);
-  return urlData.publicUrl;
-}
-
-// Show message function
-function showMessage(text, type) {
-  messageBox.textContent = text;
-  messageBox.className = `message ${type}`;
-  messageBox.classList.remove('hidden');
-  setTimeout(() => messageBox.classList.add('hidden'), 5000);
-}
