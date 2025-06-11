@@ -19,7 +19,13 @@
       <label>Sub-County <span>*</span><input type="text" name="subCounty" required></label>
       <label>Ward <span>*</span><input type="text" name="ward" required></label>
       <label>KRA PIN <span>*</span><input type="text" name="kraPin" required></label>
-      <label>Photo of ID(PNG/JPG) <span>*</span><input type="file" name="idPhoto" accept="image/*" required></label>
+      <!-- <label>Photo of ID(PNG/JPG) <span>*</span><input type="file" name="idPhoto" accept="image/*" required></label> -->
+      <label for="idFrontPhoto">ID Front Side:<span>*</span></label>
+      <input type="file" id="idFrontPhoto" name="idFrontPhoto" accept="image/*" required>
+
+      <label for="idBackPhoto">ID Back Side:<span>*</span></label>
+      <input type="file" id="idBackPhoto" name="idBackPhoto" accept="image/*" required>
+
       <label>KCSE Certificate(PDF) <span>*</span><input type="file" name="kcseCert" accept=".pdf,.jpg,.png" required></label>
       <button type="submit">Submit Application</button>
     </form>
