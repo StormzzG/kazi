@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return showMessage("Please fill in all fields and upload all required files.", false);
     }
 
-    if (!phoneNumber.startsWith('+254')) return showMessage("Phone number must start with +254", false);
+    if (phoneNumber.length !== 10) return showMessage("Phone number must be exactly 10 digits", false);
     if (idNumber.length !== 8) return showMessage("ID Number must be 8 digits", false);
     if (kraPin.length !== 11) return showMessage("KRA PIN must be 11 characters", false);
 
